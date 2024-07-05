@@ -15,15 +15,15 @@ public class ContoBancarioService {
     @Autowired
     private ContoBancarioRepository repository;
 
-    public ContoBancario create(ContoBancario contoBancario) {
-        return repository.save(contoBancario);
+    public void save(ContoBancario contoBancario) {
+       repository.save(contoBancario);
     }
 
-    public Optional<ContoBancario> read(int id) {
+    public Optional<ContoBancario> getContoBancarioById(int id) {
         return repository.findById(id);
     }
 
-    public List<ContoBancario> readAll() {
+    public List<ContoBancario> getAllContoBancario() {
         return repository.findAll();
     }
 
