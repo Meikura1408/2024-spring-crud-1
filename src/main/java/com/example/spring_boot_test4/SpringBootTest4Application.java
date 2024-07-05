@@ -11,34 +11,30 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SpringBootTest4Application implements CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBootTest4Application.class, args);
-	}
-
-	@Autowired
+    @Autowired
     private ContoBancarioService contoBancarioService;
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootTest4Application.class, args);
+    }
 
     @Override
     public void run(String... args) throws Exception {
-       
+        
         ContoBancario conto = new ContoBancario();
-        conto = contoBancarioService.createContoBancario(conto);
+        contoBancarioService.create(conto);
 
-        try {
-            
-            conto.depositare(100);
-            contoBancarioService.updateContoBancario(conto.getId(), conto);
+        ContoBancario letto = contoBancarioService.read(conto.getId()).orElseThrow();
+        System.out.println(letto);
 
-            conto.prelevare(50);
-            contoBancarioService.updateContoBancario(conto.getId(), conto);
+        letto.deposita(100);
+        contoBancarioService.update(letto.getId(), letto);
+        System.out.println(contoBancarioService.read(letto.getId()).orElseThrow());
 
-            ContoBancario retrievedConto = contoBancarioService.getContoBancario(conto.getId());
-            System.out.println("Saldo attuale: " + retrievedConto.getSaldo());
+        letto.preleva(50);
+        contoBancarioService.update(letto.getId(), letto);
+        System.out.println(contoBancarioService.read(letto.getId()).orElseThrow());
 
-            contoBancarioService.deleteContoBancario(conto.getId());
-
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
+        contoBancarioService.delete(letto.getId());
     }
 }

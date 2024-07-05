@@ -1,41 +1,43 @@
 package com.example.spring_boot_test4.serv;
 
-import com.example.spring_boot_test4.pojo.ContoBancario;
-import com.example.spring_boot_test4.repo.ContoBancarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.spring_boot_test4.pojo.ContoBancario;
+import com.example.spring_boot_test4.repo.ContoBancarioRepository;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContoBancarioService {
 
     @Autowired
-    private ContoBancarioRepository contoBancarioRepository;
+    private ContoBancarioRepository repository;
 
-    public ContoBancario createContoBancario(ContoBancario contoBancario) {
-        return contoBancarioRepository.save(contoBancario);
+    public ContoBancario create(ContoBancario contoBancario) {
+        return repository.save(contoBancario);
     }
 
-    public ContoBancario getContoBancario(Long id) {
-        return contoBancarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Conto bancario non trovato"));
+    public Optional<ContoBancario> read(int id) {
+        return repository.findById(id);
     }
 
-    public List<ContoBancario> getAllContiBancari() {
-        return contoBancarioRepository.findAll();
+    public List<ContoBancario> readAll() {
+        return repository.findAll();
     }
 
-    public ContoBancario updateContoBancario(Long id, ContoBancario updatedContoBancario) {
-        ContoBancario contoBancario = getContoBancario(id);
-       
-        double nuovoSaldo = updatedContoBancario.getSaldo();
-        if (nuovoSaldo >= 0) {
-            contoBancario.depositare(nuovoSaldo - contoBancario.getSaldo());
+    public ContoBancario update(int id, ContoBancario updatedContoBancario) {
+        Optional<ContoBancario> existingContoBancario = repository.findById(id);
+        if (existingContoBancario.isPresent()) {
+            updatedContoBancario.setId(id);
+            return repository.save(updatedContoBancario);
+        } else {
+            throw new RuntimeException("Conto bancario non trovato con ID: " + id);
         }
-        return contoBancarioRepository.save(contoBancario);
     }
 
-    public void deleteContoBancario(Long id) {
-        contoBancarioRepository.deleteById(id);
+    public void delete(int id) {
+        repository.deleteById(id);
     }
 }
